@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Booking</title>
+<style>
+.a{
+    margin-right: 5px;
+}
+body{
+display:flex;
+align-items:center;
+justify-content:center;
+min-height:100vh;
+width:100%;
+margin:10px;
+
+}
+.footer{
+text-align:center;
+padding:20px
+}
+.aa{
+text-align:center;
+}
+.main-container{
+border:2px solid black;
+border-radius:20px;
+padding:20px;
+margin:10px;
+}
+.details{
+margin:20px;
+padding:5px;
+}
+.details1,
+.details2,
+.details3{
+padding:10px;
+margin:10px;
+text-align:center;
+}
+h1,h3{
+text-align:center;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+</head>
+
+
+<script>
+
+
+
+//gettingStationsList
+$(document).ready(function(){
+	$.ajax({
+		url:"StationsData",
+		method:"get",
+		data:{},
+		success:function(response){
+			var responseText = response.split(",");
+			var td="<option></option>";
+			for(i=0;i+1<responseText.length;i++)
+			{       //console.log(i);
+				td = td+"<option value="+responseText[i++]+">"+responseText[i]+"</option>";
+			}
+			$("#to").html(td);
+			$("#from").html(td);
+		}
+		
+	});
+});
+
+//gettingTrainsList
+$(document).ready(function(){
+	$("#fromStation,#toStation").on('input',function(){
+		var fromStation = $("#fromStation").val();
+		var toStation = $("#toStation").val();
+		if(fromStation && toStation){
+			$.ajax({
+				url:"TrainData",
+				method:"get",
+				data:{
+					from:fromStation,
+					to:toStation
+				},
+				success:function(response){
+					$("#trains").html(response);
+				},
+				error:function(response){
+					console.log(response);
+					$("#error").html(response);
+				}
+			});					
+		}
+	});
+});
+
+
+//gettingCoachesList
+$(document).ready(function(){
+	$("#trainInput").on('input',function(){
+		console.log("Train Input");
+		var trIndex = $("#trainInput").val();
+		if(toStation){
+			$.ajax({
+				url:"CoachData",
+				method:"get",
+				data:{
+					trIndex:trIndex
+				},
+				success:function(response){
+					$("#coaches").html(response);
+				},
+				error:function(response){
+					console.log(response);
+					$("#error").html(response);
+				}
+			});					
+		}
+	});
+});
+</script>
+
+
+
+
+
+	<body >
+	<div class="main-container">
+	<h1>Welcome to Train Booking</h1>
+	<form action="confirm.jsp" method="POST" class="passenger-form">
+	<div class="details1">
+		<div>
+			<label for="from" class="a">From :</label>
+       		<input list="from" name="source" id="fromStation" placeholder="select source" maxlength="4">
+			<datalist  name="from" id="from">
+				<option selected disabled hidden>Select Source</option>
+			</datalist>
+		</div><br>
+		<div>
+			<label for="to" class="a">To :</label>
+    	   	<input list="to" name="destination" id="toStation" placeholder="select destination" maxlength="4">
+			<datalist name="to" id="to">
+				<option selected disabled value="" hidden>Select Destination</option>
+			</datalist>
+		</div>
+	</div>
+	
+	<!-- train Selection -->
+	<div class="details2">
+		<label for="train">Train :</label>
+		<input list="trains" name="trainInput" id="trainInput" placeholder="Find Trains" maxlength="5">
+		<datalist name="train" id="trains">
+			<option selected disabled value="" hidden>Select train</option>
+		</datalist>
+	</div>
+	
+	<!-- Coach Data -->
+	<div class="details3">
+		<label for="travelClass">Class :</label>
+		<select name="travelClass" id="coaches" style="">
+  			<option selected disabled value="" hidden>Select Class</option>
+		</select>
+	</div>
+	
+	<div>
+	<!--  label for="date" class="a">Journey Date :</label>
+  	<input type="date" id="theDate">-->
+  	Date : <input id="date_picker" type="date" name="date">
+    <script language="javascript">
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+        $('#date_picker').attr('min',today);
+	    </script>
+	 </div>
+	<div class="container">
+		<h3 align="left">Passenger Details</h3>
+		<div class="section1">
+  			<H4 >Passenger 1</H4>
+  			Name: <input type="text" placeholder="Enter name"  id ="name1" name="n1">
+  			<label for="gender1">Gender:</label>
+  			<input list="gender1" name="g1" id="g1" placeholder="choose gender">
+			<datalist id="gender1" name="gender1" readonly="readonly" >
+    			<option maxlength="4" value="male" >Male</option>
+			    <option maxlength="6" value="female">Female</option>
+			    <option maxlength="5" value="other">Other</option>
+			</datalist>
+  			Age: <input type="number" placeholder="Enter age" id="age1"  name="a1">
+		</div>
+		<div class="section2">
+  			<H4 >Passenger 2</H4>
+  			Name: <input type="text" placeholder="Enter name"  id ="name2" name="n2">
+  			<label for="gender2">Gender:</label>
+  			<input list="gender2" name="g2" id="g2" placeholder="choose gender" >
+			<datalist id="gender2" name="gender2"  readonly="readonly">
+    			<option maxlength="4" value="male" >Male</option>
+			    <option maxlength="6" value="female">Female</option>
+			    <option maxlength="5" value="other">Other</option>
+			</datalist>
+  			Age: <input type="number" placeholder="Enter age"  maxlength="2" id ="age2" name="a2">
+		</div>
+		<div class="section3">
+  			<H4 >Passenger 3</H4>
+  			Name: <input type="text" placeholder="Enter name"  id ="name3" name="n3">
+  			<label for="gender3">Gender:</label>
+  			<input list="gender3" name="g3" id="g3" placeholder="choose gender" >
+			<datalist id="gender3" name="gender3" >
+    			<option maxlength="4" value="male" >Male</option>
+			    <option maxlength="6" value="female">Female</option>
+			    <option maxlength="5" value="other">Other</option>
+			</datalist>
+  			Age: <input type="number" placeholder="Enter age"  id ="age3" name="a3">
+		</div>
+	</div><br>
+	<input class="aa" type="submit" onclick="create()">
+</form>
+</div>
+</body>
+
+<script>
+	function create()
+	{
+		console.log("oye");
+		console.log(document.getElementById("fromStation").value);
+	    sessionStorage.setItem("from",document.getElementById("fromStation").value);
+	    sessionStorage.setItem("to", document.getElementById("toStation").value);
+	    sessionStorage.setItem("train", document.getElementById("trainInput").value);
+	    sessionStorage.setItem("class", document.getElementById("coaches").value);   
+	    sessionStorage.setItem("tdate", document.getElementById("date_picker").value);   
+	    sessionStorage.setItem("pn1", document.getElementById("name1").value);   
+	    sessionStorage.setItem("pg1", document.getElementById("g1").value);   
+	    sessionStorage.setItem("pa1", document.getElementById("age1").value);   
+	    sessionStorage.setItem("pn2", document.getElementById("name2").value);   
+	    sessionStorage.setItem("pg2", document.getElementById("g2").value);   
+	    sessionStorage.setItem("pa2", document.getElementById("age2").value);   
+	    sessionStorage.setItem("pn3", document.getElementById("name3").value);   
+	    sessionStorage.setItem("pg3", document.getElementById("g3").value);   
+	    sessionStorage.setItem("pa3", document.getElementById("age3").value);   
+		console.log(sessionStorage.getItem("from"));
+	}
+	
+
+</script>
+
+</html>
